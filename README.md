@@ -2,7 +2,7 @@
   <img src="img.png" alt="LAN Share Logo" width="150"/>
 </p>
 
-# LAN File Sharing App
+# LAN File Sharing App (Local-Beam)
 
 A simple web-based file sharing tool that lets you upload files across multiple computers connected to the same LAN (Local Area Network).  
 Works over Wi-Fi or Ethernet — no internet required, no WhatsApp, no USB drives!
@@ -19,7 +19,7 @@ Works over Wi-Fi or Ethernet — no internet required, no WhatsApp, no USB drive
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/lan-file-share.git
+git clone https://github.com/Ashking-tech/Local-Beam.git
 cd lan-file-share
 ````
 
@@ -65,9 +65,7 @@ hostname -I
 └── logo.png           # Your logo image
 ```
 
-## 📷 Screenshot
 
-![Screenshot](screenshot.png)
 
 ## 🧰 Tech Stack
 
@@ -76,8 +74,3 @@ hostname -I
 * Multer (file upload middleware)
 * EJS (template engine)
 
-## 📜 License
-
-MIT License
-
-```
