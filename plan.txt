@@ -1,0 +1,11 @@
+an app to send text files through LAN
+
+step 1: 
+make a connection between two pcs using sockets
+
+step 2:
+send and recieve files
+
+step 3:
+a simple gui 
+n
