@@ -1,18 +1,70 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="XUAV=Compatible" content="IE = edge"/ >
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>file uploads</title>
-    <link rel="stylesheet" href="style.css">
+    <title>LAN File Upload</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-  <label for="text_file_upload">Upload Text File:</label>
-  <input type="file" name="profileImage">
-  <br>
-  <input type="submit" value="Upload">
-</form>
-    
+    <h1>LAN File Share</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label for="peerList">Select a device to send file:</label>
+        <select id="peerList" name="peerIp">
+            <% if (peers.length === 0) { %>
+                <option>No peers found</option>
+            <% } else { %>
+                <% peers.forEach(ip => { %>
+                    <option value="<%= ip %>"><%= ip %></option>
+                <% }); %>
+            <% } %>
+        </select>
+
+        <br><br>
+
+        <label for="fileInput">Upload File:</label>
+        <input type="file" id="fileInput" name="profileImage" required>
+
+        <br><br>
+
+        <input type="submit" value="Send File">
+    </form>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById("fileInput");
+            const peerSelect = document.getElementById("peerList");
+
+            const file = fileInput.files[0];
+            const selectedIP = peerSelect.value;
+
+            if (!file || !selectedIP) {
+                alert("Select both a peer and a file.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("profileImage", file);
+
+            try {
+                const response = await fetch(`http://${selectedIP}:3000/upload`, {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert("✅ File sent successfully!");
+                } else {
+                    alert("❌ Failed to send file.");
+                }
+            } catch (err) {
+                alert("⚠️ Error: " + err.message);
+            }
+        });
+    </script>
 </body>
 </html>

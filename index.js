@@ -1,7 +1,7 @@
-const express = require('express')
-const multer  = require('multer')
+const express = require('express');
+const multer  = require('multer');
 const path = require('path');
-
+const discovery = require('./discovery');
 const app = express()
 
 const storage = multer.diskStorage({
@@ -21,8 +21,17 @@ app.use(express.urlencoded({extended: false}));
 app.set("view engine","ejs");
 app.set("views",path.resolve("./views"));
 
-app.get('/', (req, res) => {
-  return res.render("homepage");
+
+
+
+app.get('/peers', (req, res) => {
+  return res.json(discovery.getPeers());
+});
+
+
+app.get("/", (req, res) => {
+  const peers = discovery.getPeers(); // list of discovered IPs
+  res.render("homepage", { peers });
 });
 
 app.listen(3000,'0.0.0.0.', () => {
