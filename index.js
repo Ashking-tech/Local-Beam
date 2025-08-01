@@ -4,6 +4,16 @@ const path = require('path');
 const discovery = require('./discovery');
 const app = express()
 
+
+
+const fs = require('fs');
+
+if (!fs.existsSync('./uploads')) {
+    fs.mkdirSync('./uploads');
+}
+
+app.use(express.static(path.join(__dirname, 'public')));
+
 const storage = multer.diskStorage({
     destination: function(req,file,cb){
         return cb(null,"./uploads");
@@ -17,10 +27,18 @@ const upload = multer({storage});
 
 // const upload = multer({ dest: 'uploads/' })
 
+let userNickname = "Unknown";
+
 app.use(express.urlencoded({extended: false}));
 app.set("view engine","ejs");
 app.set("views",path.resolve("./views"));
 
+
+app.post("/nickname", (req, res) => {
+  userNickname = req.body.nickname;
+  console.log("✅ Nickname set to:", userNickname);
+  res.redirect("/");
+});
 
 
 
@@ -30,11 +48,12 @@ app.get('/peers', (req, res) => {
 
 
 app.get("/", (req, res) => {
-  const peers = discovery.getPeers(); // list of discovered IPs
-  res.render("homepage", { peers });
+  const peers = discovery.getPeers();
+  res.render("homepage", { peers, nickname: userNickname });
 });
 
-app.listen(3000,'0.0.0.0.', () => {
+
+app.listen(3000,'0.0.0.0', () => {
     console.log("the server is running on port 3000")
 })
 

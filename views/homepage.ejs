@@ -1,70 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAN File Upload</title>
-    <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LAN File Share</title>
+  <link rel="stylesheet" href="/style.css" />
+
 </head>
 <body>
+  <div class="container">
     <h1>LAN File Share</h1>
 
-    <form id="uploadForm" enctype="multipart/form-data">
-        <label for="peerList">Select a device to send file:</label>
-        <select id="peerList" name="peerIp">
-            <% if (peers.length === 0) { %>
-                <option>No peers found</option>
-            <% } else { %>
-                <% peers.forEach(ip => { %>
-                    <option value="<%= ip %>"><%= ip %></option>
-                <% }); %>
-            <% } %>
-        </select>
-
-        <br><br>
-
-        <label for="fileInput">Upload File:</label>
-        <input type="file" id="fileInput" name="profileImage" required>
-
-        <br><br>
-
-        <input type="submit" value="Send File">
+    <!-- Nickname Form -->
+    <form action="/nickname" method="POST">
+      <label for="nickname">Your Nickname:</label>
+      <input type="text" name="nickname" value="<%= nickname %>" required />
+      <button type="submit">Set Nickname</button>
     </form>
 
-    <script>
-        document.getElementById("uploadForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
+    <!-- File Upload Form -->
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="peerList">Select Peer:</label>
+      <select id="peerList" name="peerIp">
+        <% if (Object.keys(peers).length === 0) { %>
+          <option>No peers found</option>
+        <% } else { %>
+          <% for (let ip in peers) {
+               const name = peers[ip];
+               const isNamed = name && name !== "Unknown";
+               const styleAttr = isNamed ? "font-weight: bold; color: green;" : "color: gray;";
+          %>
+            <option value="<%= ip %>" style="<%= styleAttr %>">
+              <%= isNamed ? name : 'Unnamed' %> (<%= ip %>)
+            </option>
+          <% } %>
+        <% } %>
+      </select>
 
-            const fileInput = document.getElementById("fileInput");
-            const peerSelect = document.getElementById("peerList");
+      <label for="fileInput">Choose File:</label>
+      <input type="file" id="fileInput" name="profileImage" required />
 
-            const file = fileInput.files[0];
-            const selectedIP = peerSelect.value;
+      <button type="submit">Send File</button>
+    </form>
 
-            if (!file || !selectedIP) {
-                alert("Select both a peer and a file.");
-                return;
-            }
+    <!-- Transfers Section -->
+    <h2>Transfers</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Peer</th>
+          <th>File</th>
+          <th>Size</th>
+          <th>Status</th>
+          <th>Progress</th>
+        </tr>
+      </thead>
+      <tbody id="transferList">
+        <!-- JS will fill rows here -->
+      </tbody>
+    </table>
+  </div>
 
-            const formData = new FormData();
-            formData.append("profileImage", file);
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
 
-            try {
-                const response = await fetch(`http://${selectedIP}:3000/upload`, {
-                    method: "POST",
-                    body: formData
-                });
+      const fileInput = document.getElementById("fileInput");
+      const peerSelect = document.getElementById("peerList");
 
-                if (response.ok) {
-                    alert("✅ File sent successfully!");
-                } else {
-                    alert("❌ Failed to send file.");
-                }
-            } catch (err) {
-                alert("⚠️ Error: " + err.message);
-            }
+      const file = fileInput.files[0];
+      const selectedIP = peerSelect.value;
+
+      if (!file || !selectedIP) {
+        alert("Select both a peer and a file.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("profileImage", file);
+
+      // Add dummy row to transfer table
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${peerSelect.options[peerSelect.selectedIndex].text}</td>
+        <td>${file.name}</td>
+        <td>${(file.size / (1024 * 1024)).toFixed(2)} MB</td>
+        <td style="color: blue;">Transferring</td>
+        <td><div style="background:#eee;"><div class="progress-bar" style="width: 5%;"></div></div></td>
+      `;
+      document.getElementById("transferList").appendChild(row);
+
+      try {
+        const response = await fetch(`http://${selectedIP}:3000/upload`, {
+          method: "POST",
+          body: formData
         });
-    </script>
+
+        if (response.ok) {
+          row.cells[3].innerText = "✅ Done";
+          row.querySelector(".progress-bar").style.width = "100%";
+        } else {
+          row.cells[3].innerText = "❌ Failed";
+          row.querySelector(".progress-bar").style.width = "0%";
+        }
+      } catch (err) {
+        row.cells[3].innerText = "⚠️ Error";
+        row.querySelector(".progress-bar").style.width = "0%";
+      }
+    });
+  </script>
 </body>
 </html>
