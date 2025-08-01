@@ -9,3 +9,6 @@ send and recieve files
 step 3:
 a simple gui 
 n
+
+
+"concurrently \"node discovery.js\" \"node server.js\""
