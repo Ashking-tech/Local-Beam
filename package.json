@@ -1,12 +1,12 @@
 {
   "name": "sockets",
   "version": "1.0.0",
-  "main": "electron.js",
+  "description": "A LAN file transfer application built with Electron and Node.js.",
+  "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dist": "electron-builder"
   },
-
   "build": {
     "publish": null,
     "appId": "com.ash.lanshare",
@@ -18,31 +18,25 @@
       "**/*",
       "!node_modules/.cache/**/*"
     ],
-    "extraResources": [
-      "uploads"
-    ],
     "linux": {
-      "target": ["deb", "AppImage"],
+      "target": ["AppImage"],
       "category": "Utility"
     },
     "win": {
       "target": "nsis"
     }
   },
-
   "keywords": [],
-  "author": "",
+  "author": "Ash",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "dgram": "^1.0.1",
     "ejs": "^3.1.10",
-    "express": "^5.1.0",
-    "multer": "^2.0.2",
-    "nodemon": "^3.1.10"
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
-    "electron": "^37.2.5",
-    "electron-builder": "^26.0.12"
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
   }
 }
