@@ -1,0 +1,4 @@
+file transfer lan app that shares file to pc
+now i want all connected pc  to send files to each other p2p
+for this i want to create a room in which there will be only pcs joining will recieve the file
+to join a room there will be a ID 
