@@ -1,4 +1,4 @@
-````markdown
+
 <p align="center">
   <img src="img.png" alt="LAN Share Logo" width="150"/>
 </p>
